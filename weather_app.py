@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from io import BytesIO
+import datetime
 
 class SkyCast:
     api_key = 'd078dfc0e65a5b6f60dddd88900e35e7'
@@ -40,7 +41,12 @@ class SkyCast:
             temp = data['main']['temp']
             tempC = temp - 273.15
             tempF = tempC * (9 / 5) + 32
+            feels_likeC = data['main']['feels_like'] - 273.15
+            feels_likeF = feels_likeC * (9 / 5) + 32
             desc = data['weather'][0]['description']
+            precipitation = data['weather'][0]['main']
+            sunrise = datetime.datetime.fromtimestamp(data['sys']['sunrise'])
+            sunset = datetime.datetime.fromtimestamp(data['sys']['sunset'])
             icon = data['weather'][0]['icon']
 
             icon_url = f'http://openweathermap.org/img/wn/{icon}.png'
@@ -56,14 +62,15 @@ class SkyCast:
             else:
                 messagebox.showerror("Error", "Error fetching icon")
 
-            #icon_url = f'http://openweathermap.org/img/w/ {icon}.png'
-            #response_icon = requests.get(icon_url)
-
             self.result.delete('1.0', tk.END)
 
-            self.result.insert(tk.END, f'temperature: {temp} K\n')
-            self.result.insert(tk.END, f'temperature: {tempC:.2f} °C\n')
-            self.result.insert(tk.END, f'temperature: {tempF:.2f} °F\n')
+            #self.result.insert(tk.END, f'temperature: {temp} K\n')
+            self.result.insert(tk.END, f'Temperature in Celsius: {tempC:.2f}°C\n')
+            self.result.insert(tk.END, f'Temperature in Fahrenheit: {tempF:.2f}°F\n')
+            self.result.insert(tk.END, f'Feels like: {feels_likeC: .2f}°C {feels_likeF: .2f}°F\n')
+            self.result.insert(tk.END, f'Status: {precipitation} \n')
+            self.result.insert(tk.END, f'Sunrise: {sunrise} \n')
+            self.result.insert(tk.END, f'Sunset: {sunset} \n')
             self.result.insert(tk.END, f'Description: {desc} \n')
             #self.result.insert(tk.END, f'{img}')
 
@@ -71,8 +78,3 @@ class SkyCast:
             messagebox.showerror("Error", 'Error fetching weather data')
 
 SkyCast()
-
-
-
-
-
